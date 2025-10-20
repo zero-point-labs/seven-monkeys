@@ -1,0 +1,81 @@
+# Icecast Configuration for Seven Monkeys DJ Platform
+# This configuration enables multiple DJ streams with proper authentication
+
+<icecast>
+    <!-- Basic server settings -->
+    <location>Earth</location>
+    <admin>admin@sevenmonkeys.com</admin>
+    
+    <!-- Server limits -->
+    <limits>
+        <clients>100</clients>
+        <sources>10</sources>
+        <queue-size>524288</queue-size>
+        <client-timeout>30</client-timeout>
+        <header-timeout>15</header-timeout>
+        <source-timeout>10</source-timeout>
+        <burst-on-connect>1</burst-on-connect>
+        <burst-size>65535</burst-size>
+    </limits>
+    
+    <!-- Authentication -->
+    <authentication>
+        <source-password>sevenmonkeys2024</source-password>
+        <relay-password>sevenmonkeys2024</relay-password>
+        <admin-user>admin</admin-user>
+        <admin-password>sevenmonkeys2024</admin-password>
+    </authentication>
+    
+    <!-- Hostname and port settings -->
+    <hostname>localhost</hostname>
+    <listen-socket>
+        <port>8000</port>
+    </listen-socket>
+    
+    <!-- Mount points for each DJ -->
+    <mount type="normal">
+        <mount-name>/dj1</mount-name>
+        <username>dj1</username>
+        <password>dj1pass</password>
+        <max-listeners>25</max-listeners>
+        <dump-file>/tmp/dj1.dump</dump-file>
+    </mount>
+    
+    <mount type="normal">
+        <mount-name>/dj2</mount-name>
+        <username>dj2</username>
+        <password>dj2pass</password>
+        <max-listeners>25</max-listeners>
+        <dump-file>/tmp/dj2.dump</dump-file>
+    </mount>
+    
+    <mount type="normal">
+        <mount-name>/dj3</mount-name>
+        <username>dj3</username>
+        <password>dj3pass</password>
+        <max-listeners>25</max-listeners>
+        <dump-file>/tmp/dj3.dump</dump-file>
+    </mount>
+    
+    <mount type="normal">
+        <mount-name>/dj4</mount-name>
+        <username>dj4</username>
+        <password>dj4pass</password>
+        <max-listeners>25</max-listeners>
+        <dump-file>/tmp/dj4.dump</dump-file>
+    </mount>
+    
+    <!-- Logging -->
+    <logging>
+        <accesslog>icecast_access.log</accesslog>
+        <errorlog>icecast_error.log</errorlog>
+        <loglevel>3</loglevel>
+        <logsize>10000</logsize>
+        <logarchive>1</logarchive>
+    </logging>
+    
+    <!-- Security settings -->
+    <security>
+        <chroot>0</chroot>
+    </security>
+</icecast>

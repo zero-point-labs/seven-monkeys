@@ -1,0 +1,70 @@
+services:
+  # Icecast streaming server
+  icecast:
+    image: moul/icecast:latest
+    container_name: seven-monkeys-icecast
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./icecast.xml:/etc/icecast2/icecast.xml:ro
+      - ./logs:/var/log/icecast2
+    environment:
+      - ICECAST_SOURCE_PASSWORD=sevenmonkeys2024
+      - ICECAST_RELAY_PASSWORD=sevenmonkeys2024
+      - ICECAST_ADMIN_PASSWORD=sevenmonkeys2024
+    restart: unless-stopped
+    networks:
+      - seven-monkeys-network
+
+  # Liquidsoap audio processor - using correct image
+  liquidsoap:
+    image: savonet/liquidsoap:2.2.4
+    container_name: seven-monkeys-liquidsoap
+    depends_on:
+      - icecast
+    volumes:
+      - ./liquidsoap.liq:/etc/liquidsoap/liquidsoap.liq:ro
+      - ./audio:/audio:ro
+      - ./logs:/var/log/liquidsoap
+    command: liquidsoap /etc/liquidsoap/liquidsoap.liq
+    restart: unless-stopped
+    networks:
+      - seven-monkeys-network
+
+  # Next.js application
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: seven-monkeys-webapp
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - ICECAST_HOST=icecast
+      - ICECAST_PORT=8000
+      - ICECAST_PASSWORD=sevenmonkeys2024
+    depends_on:
+      - icecast
+    restart: unless-stopped
+    networks:
+      - seven-monkeys-network
+
+  # Redis for session storage and caching
+  redis:
+    image: redis:7-alpine
+    container_name: seven-monkeys-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - seven-monkeys-network
+
+volumes:
+  redis-data:
+
+networks:
+  seven-monkeys-network:
+    driver: bridge

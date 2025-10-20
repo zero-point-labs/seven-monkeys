@@ -1,0 +1,36 @@
+services:
+  # Icecast streaming server
+  icecast:
+    image: moul/icecast:latest
+    container_name: seven-monkeys-icecast
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./icecast.xml:/etc/icecast2/icecast.xml:ro
+      - ./logs:/var/log/icecast2
+    environment:
+      - ICECAST_SOURCE_PASSWORD=sevenmonkeys2024
+      - ICECAST_RELAY_PASSWORD=sevenmonkeys2024
+      - ICECAST_ADMIN_PASSWORD=sevenmonkeys2024
+    restart: unless-stopped
+    networks:
+      - seven-monkeys-network
+
+  # Redis for session storage and caching
+  redis:
+    image: redis:7-alpine
+    container_name: seven-monkeys-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - seven-monkeys-network
+
+volumes:
+  redis-data:
+
+networks:
+  seven-monkeys-network:
+    driver: bridge

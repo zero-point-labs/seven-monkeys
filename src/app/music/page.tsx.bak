@@ -1,0 +1,207 @@
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
+import { Marquee } from '@/components/ui/marquee';
+import BrandLogo from '@/components/brand/BrandLogo';
+import MonkeyMascot from '@/components/brand/MonkeyMascot';
+import ThemeIcon from '@/components/brand/ThemeIcon';
+
+// Mock DJ data - this will be replaced with real data from API
+const mockDJs = [
+  {
+    id: 'vinyl-mafia',
+    name: 'Vinyl Mafia',
+    genre: 'House Music',
+    status: 'live',
+    description: 'Legendary house music vibes with soul-stirring beats',
+    avatar: 'dj',
+    listeners: 42,
+    currentTrack: 'Deep House Sessions Vol. 1'
+  },
+  {
+    id: 'andy-von-emmanuel',
+    name: 'Andy Von Emmanuel',
+    genre: 'Deep House',
+    status: 'live',
+    description: 'Soulful deep house that moves your spirit',
+    avatar: 'soulful',
+    listeners: 28,
+    currentTrack: 'Electric Soulgarden Mix'
+  },
+  {
+    id: 'moses-m',
+    name: 'Moses M',
+    genre: 'Sundown House',
+    status: 'offline',
+    description: 'Sundown house sessions for lazy Sundays',
+    avatar: 'lazy-sunday',
+    listeners: 0,
+    currentTrack: 'Offline'
+  },
+  {
+    id: 'pool-party-dj',
+    name: 'Pool Party DJ',
+    genre: 'Tropical House',
+    status: 'offline',
+    description: 'Tropical vibes for pool parties',
+    avatar: 'pool-party',
+    listeners: 0,
+    currentTrack: 'Offline'
+  }
+];
+
+const DJCard: React.FC<{ dj: typeof mockDJs[0] }> = ({ dj }) => {
+  const isLive = dj.status === 'live';
+  
+  return (
+    <Card className={`relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+      isLive ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-coral-50' : 'border-gray-200'
+    }`}>
+      <CardHeader className="text-center">
+        <div className="flex justify-center mb-4">
+          <MonkeyMascot 
+            size="lg" 
+            variant={dj.avatar as any} 
+            className={isLive ? 'drop-shadow-lg' : 'opacity-60'}
+          />
+        </div>
+        
+        <CardTitle className="text-xl font-bold text-gray-800">
+          {dj.name}
+        </CardTitle>
+        
+        <CardDescription className="text-sm text-gray-600">
+          {dj.genre}
+        </CardDescription>
+        
+        {isLive && (
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-xs text-green-600 font-medium">LIVE</span>
+            <span className="text-xs text-gray-500">• {dj.listeners} listeners</span>
+          </div>
+        )}
+      </CardHeader>
+      
+      <CardContent className="text-center">
+        <p className="text-sm text-gray-700 mb-4">
+          {dj.description}
+        </p>
+        
+        <div className="text-xs text-gray-500 mb-4">
+          <span className="font-medium">Now Playing:</span> {dj.currentTrack}
+        </div>
+        
+        <Button 
+          className={`w-full ${
+            isLive 
+              ? 'bg-gradient-to-r from-teal-500 to-coral-500 hover:from-teal-600 hover:to-coral-600 text-white' 
+              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          }`}
+          disabled={!isLive}
+        >
+          <ThemeIcon type="play" className="mr-2" />
+          {isLive ? 'Listen Live' : 'Offline'}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default function MusicPage() {
+  const liveDJs = mockDJs.filter(dj => dj.status === 'live');
+  const offlineDJs = mockDJs.filter(dj => dj.status === 'offline');
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-coral-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <BrandLogo size="lg" variant="full" />
+            <Button variant="outline" className="border-teal-500 text-teal-600 hover:bg-teal-50">
+              <ThemeIcon type="home" className="mr-2" />
+              Back to Bar
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        {/* Page Title */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            <span className="text-teal-600">DJ</span>
+            <span className="text-coral-600 ml-4">Platform</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Choose your DJ and dive into the ultimate music experience. 
+            Background playback supported on mobile devices.
+          </p>
+        </div>
+
+        {/* Live DJs Section */}
+        {liveDJs.length > 0 && (
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <h2 className="text-3xl font-bold text-gray-800">Live Now</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {liveDJs.map((dj) => (
+                <DJCard key={dj.id} dj={dj} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Offline DJs Section */}
+        {offlineDJs.length > 0 && (
+          <section>
+            <h2 className="text-3xl font-bold text-gray-800 mb-8">Available DJs</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {offlineDJs.map((dj) => (
+                <DJCard key={dj.id} dj={dj} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Features Marquee */}
+        <div className="mt-16">
+          <Marquee pauseOnHover className="[--duration:25s]">
+            {[
+              'Background Playback',
+              'Mobile Optimized',
+              'High Quality Audio',
+              'Live Streaming',
+              'Real-time Updates',
+              'Cross-platform Support'
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="mx-4 px-6 py-3 bg-gradient-to-r from-teal-500 to-coral-500 rounded-full text-white font-medium shadow-lg"
+              >
+                {feature}
+              </div>
+            ))}
+          </Marquee>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8 mt-16">
+        <div className="container mx-auto px-4 text-center">
+          <BrandLogo size="md" variant="full" className="text-white mb-4" />
+          <p className="text-gray-400">
+            Seven Monkeys The Bar • Where Music Meets Magic
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
