@@ -374,7 +374,7 @@ const DJ3DFloatingLayout: React.FC<{ dj: DJ; imagePath: string }> = ({ dj, image
           <img 
             src={imagePath}
             alt={`${dj.name} portrait`}
-            className="w-96 h-[480px] object-contain"
+            className="w-[400px] h-[480px] object-contain"
             style={{
               maxHeight: '480px',
               transform: 'translateZ(50px)'
@@ -678,7 +678,7 @@ const DJCardVariant4: React.FC<{ dj: DJ; index: number }> = ({ dj }) => {
     <div 
       id={`dj-card-${dj.id}`}
       className={`group relative overflow-hidden rounded-3xl transition-all duration-500 ${
-        isActive || isInView 
+                isActive || isInView 
           ? 'scale-102 -translate-y-1' 
           : 'sm:hover:scale-102 sm:hover:-translate-y-1'
       }`}
@@ -783,6 +783,35 @@ function MusicPageContent() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Center the first DJ on component mount
+  useEffect(() => {
+    const centerTimer = setTimeout(() => {
+      const container = document.getElementById('dj-carousel');
+      if (container) {
+        // Ensure we start at the very beginning to show first DJ centered
+        container.scrollLeft = 0;
+        container.scrollTo({
+          left: 0,
+          behavior: 'auto' // Use 'auto' for immediate positioning
+        });
+      }
+    }, 2500); // Wait for loading to complete
+
+    return () => clearTimeout(centerTimer);
+  }, []);
+
+  // Additional immediate centering effect
+  useEffect(() => {
+    const immediateTimer = setTimeout(() => {
+      const container = document.getElementById('dj-carousel');
+      if (container) {
+        container.scrollLeft = 0;
+      }
+    }, 100); // Very short delay to ensure DOM is ready
+
+    return () => clearTimeout(immediateTimer);
+  }, []);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -796,6 +825,23 @@ function MusicPageContent() {
         .overflow-x-auto {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+        
+        /* Hide scrollbars for carousel */
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        /* Snap scrolling */
+        .snap-x {
+          scroll-snap-type: x mandatory;
+        }
+        .snap-center {
+          scroll-snap-align: center;
         }
         
         @keyframes float {
@@ -812,32 +858,173 @@ function MusicPageContent() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
+        
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s ease-out forwards;
+        }
       `}</style>
-      {/* Mobile-First Header */}
-      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md" style={{ borderBottomColor: '#f8d550' + '30' }}>
-        <div className="container mx-auto px-4 py-3">
+      {/* Enhanced Header with Custom Logo */}
+      <header className="sticky top-0 z-50" style={{
+        background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 100%)',
+        backdropFilter: 'blur(20px)',
+        borderBottomColor: '#f8d550' + '40',
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+      }}>
+        <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <BrandLogo size="md" variant="full" className="text-white" />
+            {/* Left Logo */}
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <img 
+                  src="/logo/logo.png" 
+                  alt="Seven Monkeys The Bar" 
+                  className="h-12 w-auto transition-all duration-300 hover:scale-105"
+                  style={{
+                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                  }}
+                />
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 opacity-20 blur-sm" style={{
+                  background: 'radial-gradient(circle, #f8d550 0%, transparent 70%)',
+                  animation: 'pulse 3s ease-in-out infinite'
+                }}></div>
+              </div>
+              
+              {/* Brand Text */}
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-light text-white tracking-wide">Seven Monkeys</h1>
+                <p className="text-sm font-light" style={{ color: '#f8d550' }}>THE BAR</p>
+              </div>
+            </div>
+
+            {/* Centered Navigation */}
+            <nav className="absolute left-1/2 transform -translate-x-1/2 hidden md:flex items-center gap-2" style={{
+              background: 'rgba(0,0,0,0.2)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '20px',
+              padding: '8px 16px',
+              border: '1px solid rgba(248, 213, 80, 0.2)'
+            }}>
+              <a 
+                href="#music" 
+                className="px-4 py-2 rounded-full text-sm font-light tracking-wide transition-all duration-300 hover:scale-105"
+                style={{ 
+                  color: '#f8d550',
+                  background: 'rgba(248, 213, 80, 0.1)',
+                  textShadow: '0 0 15px rgba(248, 213, 80, 0.5)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(248, 213, 80, 0.2)';
+                  e.currentTarget.style.textShadow = '0 0 20px rgba(248, 213, 80, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+                  e.currentTarget.style.textShadow = '0 0 15px rgba(248, 213, 80, 0.5)';
+                }}
+              >
+                Music
+              </a>
+              <a 
+                href="#events" 
+                className="px-4 py-2 rounded-full text-sm font-light tracking-wide transition-all duration-300 hover:scale-105"
+                style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textShadow: '0 0 10px rgba(248, 213, 80, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#f8d550';
+                  e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+                  e.currentTarget.style.textShadow = '0 0 20px rgba(248, 213, 80, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(248, 213, 80, 0.3)';
+                }}
+              >
+                Events
+              </a>
+              <a 
+                href="#about" 
+                className="px-4 py-2 rounded-full text-sm font-light tracking-wide transition-all duration-300 hover:scale-105"
+                style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textShadow: '0 0 10px rgba(248, 213, 80, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#f8d550';
+                  e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+                  e.currentTarget.style.textShadow = '0 0 20px rgba(248, 213, 80, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(248, 213, 80, 0.3)';
+                }}
+              >
+                About
+              </a>
+              <a 
+                href="#menu" 
+                className="px-4 py-2 rounded-full text-sm font-light tracking-wide transition-all duration-300 hover:scale-105"
+                style={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textShadow: '0 0 10px rgba(248, 213, 80, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#f8d550';
+                  e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+                  e.currentTarget.style.textShadow = '0 0 20px rgba(248, 213, 80, 0.8)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(248, 213, 80, 0.3)';
+                }}
+              >
+                Menu
+              </a>
+            </nav>
+
+            {/* Right Contact Button */}
             <Button 
               variant="outline" 
               size="sm"
-              className="text-sm px-3 py-2"
+              className="text-sm font-light tracking-wider uppercase transition-all duration-300 hover:scale-105 hover:-translate-y-0.5" 
               style={{ 
-                borderColor: '#f8d550', 
+                background: 'rgba(248, 213, 80, 0.1)',
+                borderColor: '#f8d550' + '50',
                 color: '#f8d550',
-                boxShadow: '0 0 10px rgba(248, 213, 80, 0.4)'
+                borderRadius: '12px',
+                padding: '8px 16px',
+                boxShadow: '0 4px 12px rgba(248, 213, 80, 0.2)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f8d550' + '10';
-                e.currentTarget.style.color = '#f8d550';
+                e.currentTarget.style.background = 'rgba(248, 213, 80, 0.2)';
+                e.currentTarget.style.borderColor = '#f8d550';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(248, 213, 80, 0.3)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#f8d550';
+                e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+                e.currentTarget.style.borderColor = '#f8d550' + '50';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(248, 213, 80, 0.2)';
               }}
             >
-              <ThemeIcon type="home" size="sm" className="mr-1" />
-              Bar
+              <ThemeIcon type="contact" className="mr-2" />
+              Contact
             </Button>
           </div>
         </div>
@@ -881,79 +1068,506 @@ function MusicPageContent() {
 
               {/* DJs Section - Redesigned */}
               <main className="container mx-auto px-4 pb-8">
-        {/* Section Header */}
-        <div className="text-center mb-16 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
-          <h2 className="text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">Select Your Experience</h2>
-          <p className="text-white/60 text-base font-light tracking-wide">Four distinct musical journeys await</p>
-        </div>
-
-        {/* Vertical DJ Stack */}
-        <div className="space-y-8 max-w-2xl mx-auto">
-          {djs.map((dj: DJ, index: number) => (
-            <div 
-              key={dj.id}
-              className="opacity-0 animate-fade-in-up"
-              style={{
-                animationDelay: `${index * 150}ms`,
-                animationFillMode: 'forwards'
-              }}
-            >
-              <DJCardVertical dj={dj} index={index} />
-            </div>
-          ))}
-        </div>
-
-        {/* Sophisticated Light Yellow DJ Stack */}
-        <div className="mt-20">
-          <div className="text-center mb-16 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
-            <h2 className="text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">Premium Selection</h2>
-            <p className="text-white/60 text-base font-light tracking-wide">Curated experiences for the discerning listener</p>
-          </div>
-          
-          <div className="space-y-6 max-w-4xl mx-auto">
-            {djs.map((dj: DJ, index: number) => (
-              <div 
-                key={`premium-${dj.id}`}
-                className="opacity-0 animate-fade-in-up"
-                style={{
-                  animationDelay: `${(index * 150) + 600}ms`,
-                  animationFillMode: 'forwards'
-                }}
-              >
-                <DJCardSophisticated dj={dj} index={index} />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Floating Portrait DJ Section */}
-        <div className="mt-24">
-          <div className="text-center mb-20 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '1000ms', animationFillMode: 'forwards' }}>
+        {/* Horizontal Swipable DJ Section */}
+        <div className="mt-8">
+          <div className="text-center mb-20 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
             <h2 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">Featured Artists</h2>
             <p className="text-white/60 text-lg font-light tracking-wide">Meet our signature DJs</p>
-          </div>
-          
-          <div className="space-y-32 max-w-5xl mx-auto px-8">
-            {/* DJ One */}
-            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1200ms', animationFillMode: 'forwards' }}>
-              <DJ3DFloatingLayout 
-                dj={djs[0]} 
-                imagePath="/djone.png"
-              />
+        </div>
+
+          {/* Horizontal Scroll Container */}
+          <div className="relative max-w-7xl mx-auto">
+            <div 
+              id="dj-carousel"
+              className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                scrollBehavior: 'smooth',
+                WebkitOverflowScrolling: 'touch'
+              }}
+            >
+              {/* First DJ - Centered */}
+              <div 
+                className="flex-shrink-0 snap-center"
+                style={{ 
+                  minWidth: '100vw',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <div className="opacity-0 animate-fade-in-up"
+                  style={{
+                    animationDelay: '400ms',
+                    animationFillMode: 'forwards',
+                    width: '400px'
+                  }}
+                >
+                  <DJ3DFloatingLayout 
+                    dj={djs[0]} 
+                    imagePath="/djone.png"
+                  />
+                </div>
+              </div>
+
+              {/* Second DJ - Far Right */}
+              <div 
+                className="flex-shrink-0 snap-center"
+                style={{
+                  minWidth: '100vw',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <div className="opacity-0 animate-fade-in-up"
+                  style={{
+                    animationDelay: '600ms',
+                    animationFillMode: 'forwards',
+                    width: '400px'
+                  }}
+                >
+                  <DJ3DFloatingLayout 
+                    dj={djs[1]} 
+                    imagePath="/djtwo.png"
+                  />
+                </div>
+              </div>
             </div>
-            
-            {/* DJ Two */}
-            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1400ms', animationFillMode: 'forwards' }}>
-              <DJ3DFloatingLayout 
-                dj={djs[1]} 
-                imagePath="/djtwo.png"
-              />
+
+            {/* Navigation Dots */}
+            <div className="flex justify-center gap-3 mt-8">
+              {djs.slice(0, 2).map((_, index) => (
+                <button
+                  key={index}
+                  className="w-3 h-3 rounded-full transition-all duration-300 hover:scale-125"
+                  style={{
+                    backgroundColor: index === 0 ? '#f8d550' : 'rgba(248, 213, 80, 0.3)',
+                    boxShadow: index === 0 ? '0 0 15px rgba(248, 213, 80, 0.5)' : 'none'
+                  }}
+                  onClick={() => {
+                    const container = document.getElementById('dj-carousel');
+                    if (container) {
+                      const viewportWidth = window.innerWidth;
+                      container.scrollTo({
+                        left: index * viewportWidth,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 opacity-0 animate-fade-in-up"
+              style={{
+                background: 'rgba(0,0,0,0.3)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(248, 213, 80, 0.3)',
+                color: '#f8d550',
+                animationDelay: '600ms',
+                  animationFillMode: 'forwards'
+                }}
+              onClick={() => {
+                const container = document.getElementById('dj-carousel');
+                if (container) {
+                  const viewportWidth = window.innerWidth;
+                  container.scrollBy({
+                    left: -viewportWidth,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 opacity-0 animate-fade-in-up"
+              style={{
+                background: 'rgba(0,0,0,0.3)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(248, 213, 80, 0.3)',
+                color: '#f8d550',
+                animationDelay: '600ms',
+                animationFillMode: 'forwards'
+              }}
+              onClick={() => {
+                const container = document.getElementById('dj-carousel');
+                if (container) {
+                  const viewportWidth = window.innerWidth;
+                  container.scrollBy({
+                    left: viewportWidth,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+              </div>
+        </div>
+
+        {/* Luxury Menu Section */}
+        <div className="mt-32">
+          <div className="text-center mb-20 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '1000ms', animationFillMode: 'forwards' }}>
+            <h2 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">Craft <span style={{ color: '#f8d550' }}>Cocktails</span></h2>
+            <p className="text-white/60 text-lg font-light tracking-wide max-w-2xl mx-auto">
+              Artisanal libations crafted with precision and passion
+            </p>
+          </div>
+
+          {/* Menu Grid */}
+          <div className="max-w-6xl mx-auto px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Signature Cocktails */}
+              <div className="lg:col-span-2">
+                <h3 className="text-2xl font-light text-white mb-8 tracking-wide" style={{ color: '#f8d550' }}>
+                  Signature Collection
+                </h3>
+                <div className="space-y-6">
+                  {/* Monkey's Gold */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1200ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Monkey&apos;s Gold</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$18</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Premium bourbon, honey, lemon, and a touch of gold leaf
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Premium</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Seven Spice */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1300ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Seven Spice</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$16</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Spiced rum, ginger, lime, and seven secret spices
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#d03829' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Spiced</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Midnight Elixir */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1400ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Midnight Elixir</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$20</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Dark rum, blackberry, vanilla, and activated charcoal
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Premium</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Golden Hour */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1500ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Golden Hour</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$17</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Tequila, orange liqueur, lime, and edible gold dust
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Premium</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Classic Collection */}
+              <div>
+                <h3 className="text-2xl font-light text-white mb-8 tracking-wide" style={{ color: '#f8d550' }}>
+                  Classic Collection
+                </h3>
+                <div className="space-y-6">
+                  {/* Old Fashioned */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1600ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Old Fashioned</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$15</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Bourbon, sugar, bitters, orange peel
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#d03829' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Classic</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Negroni */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1700ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Negroni</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$14</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Gin, Campari, sweet vermouth
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#d03829' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Classic</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Manhattan */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1800ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Manhattan</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$16</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Rye whiskey, sweet vermouth, bitters
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#d03829' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Classic</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Martini */}
+                  <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1900ms', animationFillMode: 'forwards' }}>
+                    <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                      borderColor: '#f8d550' + '30',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                    }}>
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-xl font-light text-white tracking-wide">Dry Martini</h4>
+                        <span className="text-lg font-light" style={{ color: '#f8d550' }}>$15</span>
+                      </div>
+                      <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                        Gin, dry vermouth, olive
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#d03829' }}></div>
+                        <span className="text-xs text-white/50 font-light tracking-wider uppercase">Classic</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Premium Spirits Section */}
+            <div className="mt-16">
+              <h3 className="text-2xl font-light text-white mb-8 tracking-wide text-center" style={{ color: '#f8d550' }}>
+                Premium Spirits
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Whiskey Collection */}
+                <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '2000ms', animationFillMode: 'forwards' }}>
+                  <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                    borderColor: '#f8d550' + '30',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                  }}>
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="text-xl font-light text-white tracking-wide">Macallan 18</h4>
+                      <span className="text-lg font-light" style={{ color: '#f8d550' }}>$45</span>
+                    </div>
+                    <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                      Single malt scotch, aged 18 years
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+                      <span className="text-xs text-white/50 font-light tracking-wider uppercase">Premium</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cognac Collection */}
+                <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '2100ms', animationFillMode: 'forwards' }}>
+                  <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 hover:scale-105 hover:bg-black/30" style={{
+                    borderColor: '#f8d550' + '30',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(248, 213, 80, 0.1)'
+                  }}>
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="text-xl font-light text-white tracking-wide">Hennessy XO</h4>
+                      <span className="text-lg font-light" style={{ color: '#f8d550' }}>$38</span>
+                    </div>
+                    <p className="text-white/70 text-sm font-light leading-relaxed mb-3">
+                      Extra Old cognac, exceptional smoothness
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+                      <span className="text-xs text-white/50 font-light tracking-wider uppercase">Premium</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        {/* Standard Menu Section */}
+        <div className="mt-24">
+          <div className="text-center mb-16 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '2300ms', animationFillMode: 'forwards' }}>
+            <h2 className="text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">Bar <span style={{ color: '#f8d550' }}>Favorites</span></h2>
+            <p className="text-white/60 text-base font-light tracking-wide max-w-xl mx-auto">
+              Classic drinks and popular choices
+            </p>
+          </div>
 
+          {/* Simple Menu List */}
+          <div className="max-w-3xl mx-auto px-6">
+            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '2400ms', animationFillMode: 'forwards' }}>
+              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl p-8 border-2" style={{
+                borderColor: '#f8d550',
+                boxShadow: '0 12px 40px rgba(248, 213, 80, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)'
+              }}>
+                {/* Menu Items */}
+                <div className="space-y-6">
+                  {/* Item 1 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">House Margarita</h3>
+                      <p className="text-white/60 text-sm font-light">Tequila, lime juice, triple sec</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$12</span>
+                  </div>
+
+                  {/* Item 2 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Moscow Mule</h3>
+                      <p className="text-white/60 text-sm font-light">Vodka, ginger beer, lime juice</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$11</span>
+                  </div>
+
+                  {/* Item 3 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Whiskey Sour</h3>
+                      <p className="text-white/60 text-sm font-light">Bourbon, lemon juice, simple syrup</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$13</span>
+                  </div>
+
+                  {/* Item 4 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Craft Beer Selection</h3>
+                      <p className="text-white/60 text-sm font-light">Local and imported craft beers</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$8-12</span>
+                  </div>
+
+                  {/* Item 5 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">House Wine</h3>
+                      <p className="text-white/60 text-sm font-light">Red, white, and rosé selections</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$9-15</span>
+                  </div>
+
+                  {/* Item 6 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Artisan Cheese Board</h3>
+                      <p className="text-white/60 text-sm font-light">Selection of premium cheeses and accompaniments</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$18</span>
+                  </div>
+
+                  {/* Item 7 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Truffle Fries</h3>
+                      <p className="text-white/60 text-sm font-light">Hand-cut fries with truffle oil and parmesan</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$12</span>
+                  </div>
+
+                  {/* Item 8 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Premium Coffee</h3>
+                      <p className="text-white/60 text-sm font-light">Espresso, cappuccino, and specialty drinks</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$4-7</span>
+                  </div>
+
+                  {/* Item 9 */}
+                  <div className="flex justify-between items-center py-3 border-b" style={{ borderBottomColor: '#f8d550' + '20' }}>
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Fresh Juice Selection</h3>
+                      <p className="text-white/60 text-sm font-light">Orange, apple, cranberry, and seasonal options</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$6</span>
+                  </div>
+
+                  {/* Item 10 */}
+                  <div className="flex justify-between items-center py-3">
+                    <div>
+                      <h3 className="text-lg font-light text-white tracking-wide">Chocolate Lava Cake</h3>
+                      <p className="text-white/60 text-sm font-light">Warm chocolate cake with vanilla ice cream</p>
+                    </div>
+                    <span className="text-lg font-medium" style={{ color: '#f8d550' }}>$10</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Quick Stats */}
-        <div className="mt-20 text-center opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '800ms', animationFillMode: 'forwards' }}>
+        <div className="mt-20 text-center opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '2900ms', animationFillMode: 'forwards' }}>
           <div className="inline-flex items-center gap-8 bg-black/30 backdrop-blur-sm rounded-3xl px-8 py-6 transition-all duration-300" style={{
             borderColor: '#f8d550' + '20',
             borderWidth: '1px',
@@ -983,8 +1597,8 @@ function MusicPageContent() {
           <div className="text-center">
             <BrandLogo size="md" variant="full" className="text-white mb-6" />
             <p className="text-sm text-white/60 font-light tracking-wide mb-8">
-              Seven Monkeys The Bar • Where Music Meets Magic
-            </p>
+            Seven Monkeys The Bar • Where Music Meets Magic
+          </p>
             <div className="flex justify-center gap-8">
               <Button variant="ghost" size="sm" className="text-white/60 text-sm font-light tracking-wider uppercase hover:text-white transition-colors duration-300">
                 Privacy
