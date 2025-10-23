@@ -266,6 +266,375 @@ const DJCardVariant3: React.FC<{ dj: DJ; index: number }> = ({ dj }) => {
   );
 };
 
+// DJ 3D Floating Layout: Centered with 3D effects
+const DJ3DFloatingLayout: React.FC<{ dj: DJ; imagePath: string }> = ({ dj, imagePath }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+
+  // Initialize audio when component mounts
+  useEffect(() => {
+    const audioElement = new Audio('/audio/jdmusic.mp3');
+    audioElement.preload = 'auto';
+    audioElement.volume = 0.8;
+    
+    // Audio event listeners
+    audioElement.addEventListener('play', () => setIsPlaying(true));
+    audioElement.addEventListener('pause', () => setIsPlaying(false));
+    audioElement.addEventListener('ended', () => setIsPlaying(false));
+    audioElement.addEventListener('error', (e) => {
+      console.error('Audio error:', e);
+      setIsPlaying(false);
+    });
+
+    setAudio(audioElement);
+
+    // Cleanup
+    return () => {
+      audioElement.pause();
+      audioElement.removeEventListener('play', () => setIsPlaying(true));
+      audioElement.removeEventListener('pause', () => setIsPlaying(false));
+      audioElement.removeEventListener('ended', () => setIsPlaying(false));
+      audioElement.removeEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        setIsPlaying(false);
+      });
+    };
+  }, []);
+
+  // Handle play/pause
+  const handlePlayPause = async () => {
+    if (!audio) return;
+
+    try {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        await audio.play();
+      }
+    } catch (error) {
+      console.error('Playback error:', error);
+      setIsPlaying(false);
+    }
+  };
+
+  return (
+    <div className="text-center">
+      {/* 3D Floating Portrait Container */}
+      <div className="relative mb-12">
+        {/* Background Glow Effects - Behind DJ */}
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 1 }}>
+          {/* Outer Glow Effect */}
+          <div 
+            className="rounded-full opacity-30 blur-3xl"
+            style={{
+              width: '600px',
+              height: '600px',
+              background: 'radial-gradient(circle, #f8d550 0%, transparent 70%)',
+              animation: 'pulse 4s ease-in-out infinite'
+            }}
+          ></div>
+        </div>
+
+        {/* Glow Rings - Behind DJ */}
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 5 }}>
+          <div 
+            className="rounded-full opacity-40"
+            style={{
+              width: '500px',
+              height: '500px',
+              background: 'conic-gradient(from 0deg, transparent, #f8d550, transparent)',
+              animation: 'spin 20s linear infinite'
+            }}
+          ></div>
+        </div>
+
+        {/* Inner Glow Ring - Behind DJ */}
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 6 }}>
+          <div 
+            className="rounded-full opacity-30"
+            style={{
+              width: '400px',
+              height: '400px',
+              background: 'conic-gradient(from 180deg, transparent, #f8d550, transparent)',
+              animation: 'spin 15s linear infinite reverse'
+            }}
+          ></div>
+        </div>
+
+        {/* 3D Portrait - In Front */}
+        <div 
+          className="relative inline-block transition-all duration-700 hover:scale-110 hover:-translate-y-4"
+          style={{
+            zIndex: 10,
+            transform: 'perspective(1000px) rotateX(5deg) rotateY(-5deg)',
+            filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.6))',
+            animation: 'float 6s ease-in-out infinite'
+          }}
+        >
+          <img 
+            src={imagePath}
+            alt={`${dj.name} portrait`}
+            className="w-96 h-[480px] object-contain"
+            style={{
+              maxHeight: '480px',
+              transform: 'translateZ(50px)'
+            }}
+          />
+        </div>
+
+        {/* Floating Particles - In Front */}
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 15 }}>
+          <div className="absolute top-8 left-8 w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '0s' }}></div>
+          <div className="absolute top-16 right-12 w-1 h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 left-16 w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '2s' }}></div>
+          <div className="absolute bottom-8 right-8 w-1 h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '3s' }}></div>
+          <div className="absolute top-1/2 left-4 w-1 h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '4s' }}></div>
+          <div className="absolute top-1/3 right-4 w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '5s' }}></div>
+        </div>
+      </div>
+
+      {/* DJ Information */}
+      <div className="space-y-6">
+        {/* DJ Name */}
+        <h3 className="text-6xl font-light text-white tracking-wide" style={{
+          textShadow: '0 0 30px rgba(248, 213, 80, 0.5)',
+          animation: 'glow 3s ease-in-out infinite alternate'
+        }}>
+          {dj.name}
+        </h3>
+        
+        {/* Genre */}
+        <p className="text-3xl font-light tracking-wider uppercase" style={{ 
+          color: '#f8d550',
+          textShadow: '0 0 20px rgba(248, 213, 80, 0.6)'
+        }}>
+          {dj.genre}
+        </p>
+
+        {/* Play Button */}
+        <div className="pt-8">
+          <Button 
+            onClick={handlePlayPause}
+            className="rounded-3xl px-16 py-8 text-2xl font-light tracking-wider uppercase transition-all duration-500 hover:scale-110 hover:-translate-y-2"
+            style={{
+              background: 'linear-gradient(135deg, rgba(248, 213, 80, 0.2), rgba(248, 213, 80, 0.1))',
+              border: '2px solid rgba(248, 213, 80, 0.4)',
+              color: '#f8d550',
+              boxShadow: '0 20px 40px rgba(248, 213, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              textShadow: '0 0 10px rgba(248, 213, 80, 0.5)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(248, 213, 80, 0.3), rgba(248, 213, 80, 0.2))';
+              e.currentTarget.style.borderColor = '#f8d550';
+              e.currentTarget.style.boxShadow = '0 25px 50px rgba(248, 213, 80, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(248, 213, 80, 0.2), rgba(248, 213, 80, 0.1))';
+              e.currentTarget.style.borderColor = 'rgba(248, 213, 80, 0.4)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(248, 213, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+            }}
+          >
+            <ThemeIcon type={isPlaying ? "pause" : "play"} className="mr-6" />
+            {isPlaying ? 'Now Playing' : 'Listen'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// DJ Card Sophisticated: Light yellow background, rectangular, premium design
+const DJCardSophisticated: React.FC<{ dj: DJ; index: number }> = ({ dj }) => {
+  const { selectDJ, currentDJ, isPlaying } = useAudio();
+
+  return (
+    <div 
+      className="group relative transition-all duration-500 hover:scale-101 hover:-translate-y-1"
+      style={{
+        backgroundColor: 'rgba(248, 213, 80, 0.15)',
+        backdropFilter: 'blur(10px)',
+        borderColor: 'rgba(248, 213, 80, 0.3)',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderRadius: '8px',
+        boxShadow: '0 8px 32px rgba(248, 213, 80, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+      }}
+    >
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0 opacity-30" style={{
+        background: 'linear-gradient(135deg, rgba(248, 213, 80, 0.1) 0%, rgba(248, 213, 80, 0.05) 100%)'
+      }}></div>
+      
+      {/* Content */}
+      <div className="relative z-10 p-8">
+        <div className="flex items-center gap-8">
+          {/* DJ Avatar */}
+          <div className="flex-shrink-0">
+            <div className="relative w-16 h-16 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110" style={{ 
+              background: 'rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(0, 0, 0, 0.1)'
+            }}>
+              <MonkeyMascot size="md" variant={dj.avatar as 'dj' | 'soulful' | 'lazy-sunday' | 'pool-party'} />
+            </div>
+          </div>
+
+          {/* DJ Info */}
+          <div className="flex-grow min-w-0">
+            <div className="flex items-center gap-4 mb-3">
+              <h3 className="text-xl font-light text-black tracking-wide">{dj.name}</h3>
+              
+              {/* Live Status */}
+              <div className="inline-flex items-center gap-2" style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                borderRadius: '12px',
+                padding: '2px 8px',
+                border: '1px solid rgba(0, 0, 0, 0.1)'
+              }}>
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#d03829' }}></div>
+                <span className="text-xs font-light tracking-wider uppercase text-black/70">{dj.listeners} listening</span>
+              </div>
+            </div>
+            
+            <p className="text-sm font-light mb-3 tracking-wider uppercase text-black/60">{dj.genre}</p>
+
+            {/* Description */}
+            <p className="text-black/80 text-sm leading-relaxed font-light mb-4">
+              {dj.description}
+            </p>
+
+            {/* Now Playing */}
+            <div className="p-3 rounded-lg" style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              border: '1px solid rgba(0, 0, 0, 0.1)'
+            }}>
+              <div className="text-xs text-black/50 mb-1 font-light tracking-wider uppercase">Now Playing</div>
+              <div className="text-black text-sm font-light">{dj.currentTrack}</div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div className="flex-shrink-0">
+            <Button 
+              onClick={() => selectDJ(dj)}
+              className="rounded-lg px-8 py-3 text-sm font-light tracking-wider uppercase transition-all duration-300 group-hover:scale-105"
+              style={{
+                background: 'rgba(0, 0, 0, 0.1)',
+                border: '1px solid rgba(0, 0, 0, 0.2)',
+                color: '#d03829'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+              }}
+            >
+              <ThemeIcon type={currentDJ?.id === dj.id && isPlaying ? "pause" : "play"} className="mr-2" />
+              {currentDJ?.id === dj.id && isPlaying ? 'Playing' : 'Listen'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// DJ Card Vertical: Clean vertical stack layout
+const DJCardVertical: React.FC<{ dj: DJ; index: number }> = ({ dj }) => {
+  const { selectDJ, currentDJ, isPlaying } = useAudio();
+
+  return (
+    <div 
+      className="group relative overflow-hidden rounded-3xl transition-all duration-500 hover:scale-102 hover:-translate-y-1"
+      style={{
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        backdropFilter: 'blur(20px)',
+        borderColor: '#f8d550' + '20',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        boxShadow: '0 15px 35px rgba(0,0,0,0.3)'
+      }}
+    >
+      {/* Subtle Background Accent */}
+      <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+        <div className="absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl" style={{ backgroundColor: '#f8d550' }}></div>
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 p-8">
+        <div className="flex items-center gap-6">
+          {/* DJ Avatar */}
+          <div className="flex-shrink-0">
+            <div className="relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110" style={{ 
+              background: 'rgba(248, 213, 80, 0.1)',
+              border: '1px solid rgba(248, 213, 80, 0.2)'
+            }}>
+              <MonkeyMascot size="lg" variant={dj.avatar as 'dj' | 'soulful' | 'lazy-sunday' | 'pool-party'} />
+            </div>
+          </div>
+
+          {/* DJ Info */}
+          <div className="flex-grow min-w-0">
+            <h3 className="text-2xl font-light text-white mb-2 tracking-wide">{dj.name}</h3>
+            <p className="text-base font-light mb-3 tracking-wider uppercase" style={{ color: '#f8d550' }}>{dj.genre}</p>
+            
+            {/* Live Status */}
+            <div className="inline-flex items-center gap-2 mb-4" style={{
+              backgroundColor: 'rgba(248, 213, 80, 0.1)',
+              borderRadius: '20px',
+              padding: '4px 12px',
+              border: '1px solid rgba(248, 213, 80, 0.2)'
+            }}>
+              <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+              <span className="text-xs font-light tracking-wider uppercase" style={{ color: '#f8d550' }}>{dj.listeners} listening</span>
+            </div>
+
+            {/* Description */}
+            <p className="text-white/70 text-sm leading-relaxed font-light mb-4">
+              {dj.description}
+            </p>
+
+            {/* Now Playing */}
+            <div className="p-4 rounded-xl mb-4" style={{
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(248, 213, 80, 0.1)'
+            }}>
+              <div className="text-xs text-white/50 mb-1 font-light tracking-wider uppercase">Now Playing</div>
+              <div className="text-white text-sm font-light">{dj.currentTrack}</div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div className="flex-shrink-0">
+            <Button 
+              onClick={() => selectDJ(dj)}
+              className="rounded-2xl px-6 py-4 text-sm font-light tracking-wider uppercase transition-all duration-300 group-hover:scale-105"
+              style={{
+                background: 'rgba(248, 213, 80, 0.1)',
+                border: '1px solid rgba(248, 213, 80, 0.3)',
+                color: '#f8d550'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(248, 213, 80, 0.2)';
+                e.currentTarget.style.borderColor = '#f8d550';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(248, 213, 80, 0.3)';
+              }}
+            >
+              <ThemeIcon type={currentDJ?.id === dj.id && isPlaying ? "pause" : "play"} className="mr-2" />
+              {currentDJ?.id === dj.id && isPlaying ? 'Playing' : 'Listen'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // DJ Card Variant 4: Enhanced Hero-Style Layout with Mobile-Friendly Animations
 const DJCardVariant4: React.FC<{ dj: DJ; index: number }> = ({ dj }) => {
   const [isActive, setIsActive] = useState(false);
@@ -308,133 +677,92 @@ const DJCardVariant4: React.FC<{ dj: DJ; index: number }> = ({ dj }) => {
   return (
     <div 
       id={`dj-card-${dj.id}`}
-              className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-orange-400/20 transition-all duration-700 ${
-                isActive || isInView 
-                  ? 'border-orange-400/60 scale-101 shadow-xl shadow-orange-400/15 -translate-y-0.5' 
-                  : 'sm:hover:border-orange-400/60 sm:hover:scale-101 sm:hover:shadow-xl sm:hover:shadow-orange-400/15 sm:hover:-translate-y-0.5'
-              }`}
+      className={`group relative overflow-hidden rounded-3xl transition-all duration-500 ${
+        isActive || isInView 
+          ? 'scale-102 -translate-y-1' 
+          : 'sm:hover:scale-102 sm:hover:-translate-y-1'
+      }`}
+      style={{
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        backdropFilter: 'blur(20px)',
+        borderColor: isActive || isInView ? '#f8d550' + '50' : '#f8d550' + '20',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        boxShadow: isActive || isInView 
+          ? '0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(248, 213, 80, 0.1)' 
+          : '0 10px 30px rgba(0,0,0,0.2)'
+      }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchCancel}
     >
-      {/* Animated Background Pattern */}
-      <div className={`absolute inset-0 transition-opacity duration-700 ${
-        isActive || isInView ? 'opacity-25' : 'opacity-10 group-hover:opacity-25'
-      }`}>
-        <div className={`absolute top-0 right-0 w-32 h-32 bg-orange-400 rounded-full blur-3xl animate-pulse ${
-          isActive || isInView ? 'animate-spin-slow' : 'group-hover:animate-spin-slow'
-        }`}></div>
-        <div className={`absolute bottom-0 left-0 w-24 h-24 bg-pink-400 rounded-full blur-2xl animate-pulse ${
-          isActive || isInView ? 'animate-spin-slow' : 'group-hover:animate-spin-slow'
-        }`} style={{ animationDelay: '1s' }}></div>
-        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-yellow-400 rounded-full blur-xl animate-pulse ${
-          isActive || isInView ? 'animate-spin-slow' : 'group-hover:animate-spin-slow'
-        }`} style={{ animationDelay: '2s' }}></div>
-      </div>
-      
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className={`absolute top-4 left-4 w-1 h-1 bg-orange-400 rounded-full ${
-          isActive || isInView ? 'animate-ping' : 'animate-bounce group-hover:animate-ping'
-        }`} style={{ animationDelay: '0.5s' }}></div>
-        <div className={`absolute top-8 right-8 w-1 h-1 bg-pink-400 rounded-full ${
-          isActive || isInView ? 'animate-ping' : 'animate-bounce group-hover:animate-ping'
-        }`} style={{ animationDelay: '1.5s' }}></div>
-        <div className={`absolute bottom-6 left-6 w-1 h-1 bg-yellow-400 rounded-full ${
-          isActive || isInView ? 'animate-ping' : 'animate-bounce group-hover:animate-ping'
-        }`} style={{ animationDelay: '2.5s' }}></div>
-        <div className={`absolute bottom-4 right-4 w-1 h-1 bg-orange-400 rounded-full ${
-          isActive || isInView ? 'animate-ping' : 'animate-bounce group-hover:animate-ping'
-        }`} style={{ animationDelay: '3s' }}></div>
+      {/* Subtle Background Accent */}
+      <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+        <div className="absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl" style={{ backgroundColor: '#f8d550' }}></div>
       </div>
       
       {/* Content */}
       <div className="relative z-10 p-4 sm:p-6">
         {/* DJ Info */}
-        <div className="text-center mb-4 sm:mb-6">
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4">
-            <div className={`absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full animate-spin-slow transition-opacity duration-500 ${
-              isActive || isInView ? 'opacity-40' : 'opacity-20 group-hover:opacity-40'
-            }`}></div>
-            <div className={`relative w-full h-full bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center transition-all duration-500 ${
-              isActive || isInView 
-                ? 'scale-110 animate-glow-pulse' 
-                : 'group-hover:scale-110 group-hover:animate-glow-pulse'
-            }`}>
-              <MonkeyMascot size="md" variant={dj.avatar as 'dj' | 'soulful' | 'lazy-sunday' | 'pool-party'} />
+        <div className="text-center mb-8">
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="relative w-full h-full rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105" style={{ 
+              background: 'rgba(248, 213, 80, 0.1)',
+              border: '1px solid rgba(248, 213, 80, 0.2)'
+            }}>
+              <MonkeyMascot size="lg" variant={dj.avatar as 'dj' | 'soulful' | 'lazy-sunday' | 'pool-party'} />
             </div>
-            {/* Pulsing Ring */}
-            <div className={`absolute inset-0 border-2 rounded-full animate-ping transition-all duration-500 ${
-              isActive || isInView ? 'border-orange-400/60' : 'border-orange-400/30 group-hover:border-orange-400/60'
-            }`}></div>
-            {/* Hover Ring */}
-            <div className={`absolute inset-0 border-2 rounded-full transition-all duration-500 ${
-              isActive || isInView 
-                ? 'border-pink-400/40 animate-ping' 
-                : 'border-transparent group-hover:border-pink-400/40 group-hover:animate-ping'
-            }`} style={{ animationDelay: '0.5s' }}></div>
           </div>
           
-          <h3 className={`text-lg sm:text-xl font-bold text-white mb-1 transition-all duration-300 ${
-            isActive || isInView 
-              ? 'text-orange-400 scale-105' 
-              : 'group-hover:text-orange-400 group-hover:scale-105'
-          }`}>{dj.name}</h3>
-          <p className={`text-orange-400 font-medium mb-2 transition-all duration-300 ${
-            isActive || isInView 
-              ? 'text-pink-400 scale-105' 
-              : 'group-hover:text-pink-400 group-hover:scale-105'
-          }`}>{dj.genre}</p>
+          <h3 className="text-xl font-light text-white mb-2 tracking-wide">{dj.name}</h3>
+          <p className="text-sm font-light mb-4 tracking-wider uppercase" style={{ color: '#f8d550' }}>{dj.genre}</p>
           
           {/* Live Status */}
-          <div className={`inline-flex items-center gap-2 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1 mb-3 sm:mb-4 transition-all duration-300 ${
-            isActive || isInView 
-              ? 'bg-orange-400/30 scale-105' 
-              : 'bg-orange-400/20 group-hover:bg-orange-400/30 group-hover:scale-105'
-          }`}>
-            <div className={`w-2 h-2 bg-orange-400 rounded-full ${
-              isActive || isInView ? 'animate-bounce' : 'animate-pulse group-hover:animate-bounce'
-            }`}></div>
-            <span className="text-orange-400 text-xs sm:text-sm font-medium">LIVE • {dj.listeners} listeners</span>
+          <div className="inline-flex items-center gap-2 mb-6" style={{
+            backgroundColor: 'rgba(248, 213, 80, 0.1)',
+            borderRadius: '20px',
+            padding: '6px 12px',
+            border: '1px solid rgba(248, 213, 80, 0.2)'
+          }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#f8d550' }}></div>
+            <span className="text-xs font-light tracking-wider uppercase" style={{ color: '#f8d550' }}>{dj.listeners} listening</span>
           </div>
         </div>
 
         {/* Description */}
-        <p className={`text-gray-300 text-xs sm:text-sm text-center mb-3 sm:mb-4 leading-relaxed transition-all duration-300 ${
-          isActive || isInView 
-            ? 'text-gray-200 scale-105' 
-            : 'group-hover:text-gray-200 group-hover:scale-105'
-        }`}>
+        <p className="text-white/70 text-sm text-center mb-6 leading-relaxed font-light">
           {dj.description}
         </p>
 
         {/* Now Playing */}
-        <div className={`backdrop-blur-sm rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 transition-all duration-300 ${
-          isActive || isInView 
-            ? 'bg-gray-800/60 scale-105' 
-            : 'bg-gray-800/40 group-hover:bg-gray-800/60 group-hover:scale-105'
-        }`}>
-          <div className="text-xs text-gray-400 mb-2 text-center">Now Playing</div>
-          <div className={`text-white font-medium text-center transition-colors duration-300 ${
-            isActive || isInView ? 'text-orange-400' : 'group-hover:text-orange-400'
-          }`}>{dj.currentTrack}</div>
+        <div className="mb-8 p-4 rounded-2xl" style={{
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          border: '1px solid rgba(248, 213, 80, 0.1)'
+        }}>
+          <div className="text-xs text-white/50 mb-2 text-center font-light tracking-wider uppercase">Now Playing</div>
+          <div className="text-white text-sm text-center font-light">{dj.currentTrack}</div>
         </div>
 
         {/* Action Button */}
         <Button 
           onClick={() => selectDJ(dj)}
-          className={`w-full bg-gradient-to-r from-orange-400 to-pink-400 hover:from-orange-500 hover:to-pink-500 text-black font-bold rounded-xl py-2 sm:py-3 text-sm sm:text-lg transition-all duration-500 ${
-            isActive || isInView 
-              ? 'drop-shadow-[0_0_30px_rgba(251,146,60,0.6)] scale-101 -translate-y-0.5' 
-              : 'drop-shadow-[0_0_15px_rgba(251,146,60,0.3)] sm:group-hover:drop-shadow-[0_0_30px_rgba(251,146,60,0.6)] sm:hover:scale-101 sm:hover:-translate-y-0.5'
-          } ${
-            currentDJ?.id === dj.id && isPlaying ? 'ring-2 ring-orange-400 ring-opacity-50' : ''
-          }`}
+          className="w-full rounded-2xl py-4 text-sm font-light tracking-wider uppercase transition-all duration-300 group-hover:scale-105"
+          style={{
+            background: 'rgba(248, 213, 80, 0.1)',
+            border: '1px solid rgba(248, 213, 80, 0.3)',
+            color: '#f8d550'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(248, 213, 80, 0.2)';
+            e.currentTarget.style.borderColor = '#f8d550';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(248, 213, 80, 0.1)';
+            e.currentTarget.style.borderColor = 'rgba(248, 213, 80, 0.3)';
+          }}
         >
-          <ThemeIcon type={currentDJ?.id === dj.id && isPlaying ? "pause" : "play"} className={`mr-2 ${
-            isActive || isInView ? 'animate-bounce' : 'sm:group-hover:animate-bounce'
-          }`} />
-          {currentDJ?.id === dj.id && isPlaying ? 'Now Playing' : 'Tune In Now'}
+          <ThemeIcon type={currentDJ?.id === dj.id && isPlaying ? "pause" : "play"} className="mr-3" />
+          {currentDJ?.id === dj.id && isPlaying ? 'Now Playing' : 'Listen'}
         </Button>
       </div>
     </div>
@@ -460,16 +788,53 @@ function MusicPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
+    <div className="min-h-screen" style={{ backgroundColor: '#d03829' }}>
+      <style jsx>{`
+        .overflow-x-auto::-webkit-scrollbar {
+          display: none;
+        }
+        .overflow-x-auto {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateY(0px); }
+          50% { transform: perspective(1000px) rotateX(5deg) rotateY(-5deg) translateY(-20px); }
+        }
+        
+        @keyframes glow {
+          0% { text-shadow: 0 0 30px rgba(248, 213, 80, 0.5); }
+          100% { text-shadow: 0 0 40px rgba(248, 213, 80, 0.8), 0 0 60px rgba(248, 213, 80, 0.4); }
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       {/* Mobile-First Header */}
-      <header className="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-gray-800">
+      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md" style={{ borderBottomColor: '#f8d550' + '30' }}>
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <BrandLogo size="md" variant="full" className="text-white" />
             <Button 
               variant="outline" 
               size="sm"
-              className="border-orange-400 text-orange-400 hover:bg-orange-400/10 hover:text-orange-300 drop-shadow-[0_0_10px_rgba(251,146,60,0.4)] text-sm px-3 py-2"
+              className="text-sm px-3 py-2"
+              style={{ 
+                borderColor: '#f8d550', 
+                color: '#f8d550',
+                boxShadow: '0 0 10px rgba(248, 213, 80, 0.4)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f8d550' + '10';
+                e.currentTarget.style.color = '#f8d550';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#f8d550';
+              }}
             >
               <ThemeIcon type="home" size="sm" className="mr-1" />
               Bar
@@ -482,20 +847,27 @@ function MusicPageContent() {
       <section className="relative px-4 py-8">
         <div className="text-center max-w-4xl mx-auto">
           {/* Main Title */}
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-            <span className="text-orange-400 drop-shadow-[0_0_20px_rgba(251,146,60,0.6)]">DJ</span>
-            <span className="text-pink-400 ml-2 md:ml-4 drop-shadow-[0_0_20px_rgba(244,114,182,0.6)]">Platform</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light mb-6 leading-tight tracking-tight">
+            <span style={{ color: '#f8d550', fontWeight: '300', letterSpacing: '-0.02em' }}>DJ</span>
+            <span className="text-white ml-3 md:ml-6 font-extralight" style={{ letterSpacing: '-0.02em' }}>Platform</span>
           </h1>
           
           {/* Subtitle */}
-          <p className="text-base md:text-lg text-gray-300 mb-6 max-w-2xl mx-auto leading-relaxed">
-            Choose your DJ and dive into the ultimate music experience
+          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto leading-relaxed font-light tracking-wide">
+            Curated musical experiences for the discerning listener
           </p>
 
           {/* Live Status Badge */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400/20 to-pink-400/20 backdrop-blur-sm border border-orange-400/30 rounded-full px-4 py-2 mb-8">
-            <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse drop-shadow-[0_0_8px_rgba(251,146,60,0.8)]"></div>
-            <span className="text-orange-400 text-sm font-medium">Live Streaming</span>
+          <div className="inline-flex items-center gap-3 backdrop-blur-sm rounded-full px-6 py-3 mb-12" style={{ 
+            background: 'rgba(0,0,0,0.2)',
+            borderColor: '#f8d550' + '40',
+            borderWidth: '1px',
+            borderStyle: 'solid'
+          }}>
+            <div className="w-2 h-2 rounded-full" style={{ 
+              backgroundColor: '#f8d550'
+            }}></div>
+            <span className="text-sm font-light tracking-wider uppercase" style={{ color: '#f8d550' }}>Live Now</span>
           </div>
         </div>
       </section>
@@ -510,77 +882,117 @@ function MusicPageContent() {
               {/* DJs Section - Redesigned */}
               <main className="container mx-auto px-4 pb-8">
         {/* Section Header */}
-        <div className="text-center mb-8 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Choose Your DJ</h2>
-          <p className="text-gray-400 text-sm md:text-base">All DJs are currently live</p>
+        <div className="text-center mb-16 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
+          <h2 className="text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">Select Your Experience</h2>
+          <p className="text-white/60 text-base font-light tracking-wide">Four distinct musical journeys await</p>
         </div>
 
-        {/* DJs Grid - Enhanced Landing Animations */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6">
-          {djs.map((dj: DJ, index: number) => {
-            // Different animation styles for each card
-            const animations = [
-              'animate-slide-in-left',
-              'animate-bounce-in', 
-              'animate-rotate-in',
-              'animate-flip-in'
-            ];
-            
-            const animationClass = animations[index % animations.length];
-            const delay = index * 100; // Faster staggered timing
-            
-            return (
+        {/* Vertical DJ Stack */}
+        <div className="space-y-8 max-w-2xl mx-auto">
+          {djs.map((dj: DJ, index: number) => (
+            <div 
+              key={dj.id}
+              className="opacity-0 animate-fade-in-up"
+              style={{
+                animationDelay: `${index * 150}ms`,
+                animationFillMode: 'forwards'
+              }}
+            >
+              <DJCardVertical dj={dj} index={index} />
+            </div>
+          ))}
+        </div>
+
+        {/* Sophisticated Light Yellow DJ Stack */}
+        <div className="mt-20">
+          <div className="text-center mb-16 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
+            <h2 className="text-3xl md:text-4xl font-light text-white mb-4 tracking-tight">Premium Selection</h2>
+            <p className="text-white/60 text-base font-light tracking-wide">Curated experiences for the discerning listener</p>
+          </div>
+          
+          <div className="space-y-6 max-w-4xl mx-auto">
+            {djs.map((dj: DJ, index: number) => (
               <div 
-                key={dj.id}
-                className={`group opacity-0 ${animationClass}`}
+                key={`premium-${dj.id}`}
+                className="opacity-0 animate-fade-in-up"
                 style={{
-                  animationDelay: `${delay}ms`,
+                  animationDelay: `${(index * 150) + 600}ms`,
                   animationFillMode: 'forwards'
                 }}
               >
-                <DJCardVariant4 dj={dj} index={index} />
+                <DJCardSophisticated dj={dj} index={index} />
               </div>
-            );
-          })}
+            ))}
+          </div>
+        </div>
+
+        {/* Floating Portrait DJ Section */}
+        <div className="mt-24">
+          <div className="text-center mb-20 opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '1000ms', animationFillMode: 'forwards' }}>
+            <h2 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">Featured Artists</h2>
+            <p className="text-white/60 text-lg font-light tracking-wide">Meet our signature DJs</p>
+          </div>
+          
+          <div className="space-y-32 max-w-5xl mx-auto px-8">
+            {/* DJ One */}
+            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1200ms', animationFillMode: 'forwards' }}>
+              <DJ3DFloatingLayout 
+                dj={djs[0]} 
+                imagePath="/djone.png"
+              />
+            </div>
+            
+            {/* DJ Two */}
+            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1400ms', animationFillMode: 'forwards' }}>
+              <DJ3DFloatingLayout 
+                dj={djs[1]} 
+                imagePath="/djtwo.png"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-12 text-center opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '800ms', animationFillMode: 'forwards' }}>
-          <div className="inline-flex items-center gap-6 bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-full px-6 py-3 hover:border-orange-400/50 transition-all duration-300">
+        <div className="mt-20 text-center opacity-0 translate-y-4 animate-fade-in-up" style={{ animationDelay: '800ms', animationFillMode: 'forwards' }}>
+          <div className="inline-flex items-center gap-8 bg-black/30 backdrop-blur-sm rounded-3xl px-8 py-6 transition-all duration-300" style={{
+            borderColor: '#f8d550' + '20',
+            borderWidth: '1px',
+            borderStyle: 'solid'
+          }}>
             <div className="text-center">
-              <div className="text-orange-400 font-bold text-lg">{djs.length}</div>
-              <div className="text-gray-400 text-xs">Active DJs</div>
+              <div className="text-2xl font-light mb-1" style={{ color: '#f8d550' }}>{djs.length}</div>
+              <div className="text-white/60 text-xs font-light tracking-wider uppercase">Active DJs</div>
             </div>
-            <div className="w-px h-8 bg-gray-700"></div>
+            <div className="w-px h-8" style={{ backgroundColor: '#f8d550' + '20' }}></div>
             <div className="text-center">
-                      <div className="text-pink-400 font-bold text-lg">{djs.reduce((sum: number, dj: DJ) => sum + dj.listeners, 0)}</div>
-              <div className="text-gray-400 text-xs">Total Listeners</div>
+              <div className="text-2xl font-light mb-1" style={{ color: '#f8d550' }}>{djs.reduce((sum: number, dj: DJ) => sum + dj.listeners, 0)}</div>
+              <div className="text-white/60 text-xs font-light tracking-wider uppercase">Total Listeners</div>
             </div>
-            <div className="w-px h-8 bg-gray-700"></div>
+            <div className="w-px h-8" style={{ backgroundColor: '#f8d550' + '20' }}></div>
             <div className="text-center">
-              <div className="text-orange-400 font-bold text-lg">24/7</div>
-              <div className="text-gray-400 text-xs">Live Stream</div>
+              <div className="text-2xl font-light mb-1" style={{ color: '#f8d550' }}>24/7</div>
+              <div className="text-white/60 text-xs font-light tracking-wider uppercase">Live Stream</div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Mobile-First Footer */}
-      <footer className="bg-black/90 backdrop-blur-sm border-t border-gray-800 mt-16">
-        <div className="container mx-auto px-4 py-6">
+      {/* Sophisticated Footer */}
+      <footer className="bg-black/80 backdrop-blur-sm mt-24" style={{ borderTopColor: '#f8d550' + '20', borderTopWidth: '1px', borderTopStyle: 'solid' }}>
+        <div className="container mx-auto px-4 py-12">
           <div className="text-center">
-            <BrandLogo size="sm" variant="full" className="text-white mb-3" />
-            <p className="text-xs text-gray-400">
-            Seven Monkeys The Bar • Where Music Meets Magic
-          </p>
-            <div className="flex justify-center gap-4 mt-4">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-400 text-xs">
+            <BrandLogo size="md" variant="full" className="text-white mb-6" />
+            <p className="text-sm text-white/60 font-light tracking-wide mb-8">
+              Seven Monkeys The Bar • Where Music Meets Magic
+            </p>
+            <div className="flex justify-center gap-8">
+              <Button variant="ghost" size="sm" className="text-white/60 text-sm font-light tracking-wider uppercase hover:text-white transition-colors duration-300">
                 Privacy
               </Button>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-400 text-xs">
+              <Button variant="ghost" size="sm" className="text-white/60 text-sm font-light tracking-wider uppercase hover:text-white transition-colors duration-300">
                 Terms
               </Button>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-orange-400 text-xs">
+              <Button variant="ghost" size="sm" className="text-white/60 text-sm font-light tracking-wider uppercase hover:text-white transition-colors duration-300">
                 Contact
               </Button>
             </div>
