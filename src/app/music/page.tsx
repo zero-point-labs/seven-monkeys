@@ -18,8 +18,10 @@ const LoadingScreen: React.FC = () => {
   useEffect(() => {
     const loadingSteps = [
       { progress: 0, text: 'Loading...' },
-      { progress: 50, text: 'Connecting...' },
-      { progress: 100, text: 'Ready! 🎧' }
+      { progress: 30, text: 'Connecting to DJs...' },
+      { progress: 60, text: 'Preparing audio...' },
+      { progress: 90, text: 'Almost ready...' },
+      { progress: 100, text: 'Welcome to Seven Monkeys! 🎵' }
     ];
 
     let currentStep = 0;
@@ -31,79 +33,92 @@ const LoadingScreen: React.FC = () => {
       } else {
         clearInterval(interval);
       }
-    }, 600); // Faster updates every 600ms
+    }, 500); // Faster updates every 500ms
 
     return () => clearInterval(interval);
   }, []);
   
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center">
-      {/* Animated Background */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ 
+      background: 'linear-gradient(135deg, #d03829 0%, #b8321a 50%, #d03829 100%)'
+    }}>
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Floating Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-orange-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-pink-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        {/* Golden Glow Effects */}
+        <div className="absolute top-1/4 left-1/4 w-40 h-40 rounded-full blur-3xl opacity-20 animate-pulse" style={{ backgroundColor: '#f8d550' }}></div>
+        <div className="absolute top-3/4 right-1/4 w-32 h-32 rounded-full blur-2xl opacity-15 animate-pulse" style={{ backgroundColor: '#f8d550', animationDelay: '1s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-24 h-24 rounded-full blur-xl opacity-10 animate-pulse" style={{ backgroundColor: '#f8d550', animationDelay: '2s' }}></div>
         
-        {/* Floating Particles */}
-        <div className="absolute top-1/3 left-1/2 w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-        <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '1.5s' }}></div>
-        <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '2.5s' }}></div>
+        {/* Floating Golden Particles */}
+        <div className="absolute top-1/3 left-1/2 w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: '#f8d550', animationDelay: '0.5s' }}></div>
+        <div className="absolute top-2/3 right-1/3 w-1 h-1 rounded-full animate-bounce" style={{ backgroundColor: '#f8d550', animationDelay: '1.5s' }}></div>
+        <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 rounded-full animate-bounce" style={{ backgroundColor: '#f8d550', animationDelay: '2.5s' }}></div>
       </div>
 
       {/* Main Loading Content */}
-      <div className="relative z-10 text-center">
-        {/* Logo Animation */}
-        <div className="mb-8">
-          <div className="relative w-24 h-24 mx-auto mb-4 animate-float">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full animate-spin-slow opacity-30"></div>
-            <div className="relative w-full h-full bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center animate-glow-pulse">
-              <MonkeyMascot size="lg" variant="default" />
+      <div className="relative z-10 text-center px-8">
+        {/* Logo Section */}
+        <div className="mb-12">
+          <div className="flex items-center justify-center mb-8">
+            <img 
+              src="/logo/logo.png" 
+              alt="Seven Monkeys Logo" 
+              className="h-16 w-auto mr-4 animate-pulse"
+              style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
+            />
+            <div>
+              <h1 className="text-3xl font-light text-white tracking-wide animate-fade-in-up">Seven Monkeys</h1>
+              <p className="text-sm font-light tracking-wider uppercase animate-fade-in-up" style={{ color: '#f8d550', animationDelay: '0.2s' }}>THE BAR</p>
             </div>
-            <div className="absolute inset-0 border-2 border-orange-400/50 rounded-full animate-ping"></div>
           </div>
-          <BrandLogo size="lg" variant="full" className="text-white animate-pulse" />
+          
+          {/* Brand Tagline */}
+          <p className="text-white/80 text-lg font-light tracking-wide mb-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            Where Music Meets Magic
+          </p>
         </div>
 
         {/* Loading Text */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-2 animate-pulse">
+          <h2 className="text-2xl font-light text-white mb-4 animate-pulse tracking-wide">
             {loadingText}
           </h2>
-          <p className="text-gray-400 text-sm">
-            Seven Monkeys DJ Platform
-          </p>
         </div>
 
         {/* Progress Bar */}
         <div className="w-80 mx-auto mb-8">
-          <div className="bg-gray-800 rounded-full h-2 overflow-hidden">
+          <div className="bg-black/30 backdrop-blur-sm rounded-full h-3 overflow-hidden border" style={{ borderColor: '#f8d550' + '30' }}>
             <div 
-              className="h-full bg-gradient-to-r from-orange-400 to-pink-400 rounded-full transition-all duration-500 ease-out relative"
-              style={{ width: `${loadingProgress}%` }}
+              className="h-full rounded-full transition-all duration-500 ease-out relative"
+              style={{ 
+                width: `${loadingProgress}%`,
+                background: 'linear-gradient(90deg, #f8d550 0%, #f4d03f 100%)',
+                boxShadow: '0 0 20px rgba(248, 213, 80, 0.5)'
+              }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full animate-pulse" style={{ background: 'linear-gradient(90deg, #f8d550 0%, #f4d03f 100%)' }}></div>
             </div>
           </div>
-          <div className="text-center mt-2">
-            <span className="text-orange-400 font-bold text-sm">{loadingProgress}%</span>
+          <div className="text-center mt-3">
+            <span className="text-lg font-light tracking-wide" style={{ color: '#f8d550' }}>{loadingProgress}%</span>
           </div>
         </div>
 
-        {/* Music Wave Animation - Simplified for faster loading */}
-        <div className="flex justify-center items-end space-x-1 mb-8">
-          <div className="w-1 h-8 bg-orange-400 rounded-full animate-music-wave"></div>
-          <div className="w-1 h-12 bg-pink-400 rounded-full animate-music-wave" style={{ animationDelay: '0.2s' }}></div>
-          <div className="w-1 h-6 bg-yellow-400 rounded-full animate-music-wave" style={{ animationDelay: '0.4s' }}></div>
-          <div className="w-1 h-10 bg-orange-400 rounded-full animate-music-wave" style={{ animationDelay: '0.6s' }}></div>
+        {/* Music Wave Animation */}
+        <div className="flex justify-center items-end space-x-2 mb-8">
+          <div className="w-1 h-8 rounded-full animate-music-wave" style={{ backgroundColor: '#f8d550' }}></div>
+          <div className="w-1 h-12 rounded-full animate-music-wave" style={{ backgroundColor: '#f8d550', animationDelay: '0.2s' }}></div>
+          <div className="w-1 h-6 rounded-full animate-music-wave" style={{ backgroundColor: '#f8d550', animationDelay: '0.4s' }}></div>
+          <div className="w-1 h-10 rounded-full animate-music-wave" style={{ backgroundColor: '#f8d550', animationDelay: '0.6s' }}></div>
+          <div className="w-1 h-8 rounded-full animate-music-wave" style={{ backgroundColor: '#f8d550', animationDelay: '0.8s' }}></div>
         </div>
 
         {/* Music Notes Animation */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 text-orange-400 animate-bounce" style={{ animationDelay: '0.3s' }}>♪</div>
-          <div className="absolute top-1/3 right-1/4 text-pink-400 animate-bounce" style={{ animationDelay: '0.6s' }}>♫</div>
-          <div className="absolute bottom-1/3 left-1/3 text-yellow-400 animate-bounce" style={{ animationDelay: '0.9s' }}>♪</div>
-          <div className="absolute bottom-1/4 right-1/3 text-orange-400 animate-bounce" style={{ animationDelay: '1.2s' }}>♫</div>
+          <div className="absolute top-1/4 left-1/4 text-2xl animate-bounce" style={{ color: '#f8d550', animationDelay: '0.3s' }}>♪</div>
+          <div className="absolute top-1/3 right-1/4 text-2xl animate-bounce" style={{ color: '#f8d550', animationDelay: '0.6s' }}>♫</div>
+          <div className="absolute bottom-1/3 left-1/3 text-2xl animate-bounce" style={{ color: '#f8d550', animationDelay: '0.9s' }}>♪</div>
+          <div className="absolute bottom-1/4 right-1/3 text-2xl animate-bounce" style={{ color: '#f8d550', animationDelay: '1.2s' }}>♫</div>
         </div>
       </div>
     </div>
