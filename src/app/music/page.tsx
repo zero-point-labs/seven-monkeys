@@ -320,121 +320,121 @@ const DJ3DFloatingLayout: React.FC<{ dj: DJ; imagePath: string }> = ({ dj, image
   return (
     <div className="text-center">
       {/* 3D Floating Portrait Container */}
-      <div className="relative mb-12">
+      <div className="relative mb-8 sm:mb-12">
         {/* Background Glow Effects - Behind DJ */}
         <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 1 }}>
-          {/* Outer Glow Effect */}
+          {/* Outer Glow Effect - Responsive */}
           <div 
-            className="rounded-full opacity-30 blur-3xl"
+            className="rounded-full opacity-20 sm:opacity-30 blur-2xl sm:blur-3xl"
             style={{
-              width: '600px',
-              height: '600px',
+              width: 'min(80vw, 400px)',
+              height: 'min(80vw, 400px)',
               background: 'radial-gradient(circle, #f8d550 0%, transparent 70%)',
               animation: 'pulse 4s ease-in-out infinite'
             }}
           ></div>
         </div>
 
-        {/* Glow Rings - Behind DJ */}
+        {/* Glow Rings - Behind DJ - Responsive */}
         <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 5 }}>
           <div 
-            className="rounded-full opacity-40"
+            className="rounded-full opacity-30 sm:opacity-40"
             style={{
-              width: '500px',
-              height: '500px',
+              width: 'min(70vw, 350px)',
+              height: 'min(70vw, 350px)',
               background: 'conic-gradient(from 0deg, transparent, #f8d550, transparent)',
               animation: 'spin 20s linear infinite'
             }}
           ></div>
         </div>
 
-        {/* Inner Glow Ring - Behind DJ */}
+        {/* Inner Glow Ring - Behind DJ - Responsive */}
         <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 6 }}>
           <div 
-            className="rounded-full opacity-30"
+            className="rounded-full opacity-20 sm:opacity-30"
             style={{
-              width: '400px',
-              height: '400px',
+              width: 'min(60vw, 300px)',
+              height: 'min(60vw, 300px)',
               background: 'conic-gradient(from 180deg, transparent, #f8d550, transparent)',
               animation: 'spin 15s linear infinite reverse'
             }}
           ></div>
         </div>
 
-        {/* 3D Portrait - In Front */}
+        {/* 3D Portrait - In Front - Responsive */}
         <div 
-          className="relative inline-block transition-all duration-700 hover:scale-110 hover:-translate-y-4"
+          className="relative inline-block transition-all duration-700 hover:scale-105 sm:hover:scale-110 hover:-translate-y-2 sm:hover:-translate-y-4"
           style={{
             zIndex: 10,
             transform: 'perspective(1000px) rotateX(5deg) rotateY(-5deg)',
-            filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.6))',
+            filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.6))',
             animation: 'float 6s ease-in-out infinite'
           }}
         >
           <img 
             src={imagePath}
             alt={`${dj.name} portrait`}
-            className="w-[400px] h-[480px] object-contain"
+            className="w-[min(70vw,300px)] sm:w-[min(60vw,400px)] lg:w-[400px] h-auto object-contain"
             style={{
-              maxHeight: '480px',
+              maxHeight: 'min(80vh, 480px)',
               transform: 'translateZ(50px)'
             }}
           />
         </div>
 
-        {/* Floating Particles - In Front */}
+        {/* Floating Particles - In Front - Responsive */}
         <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 15 }}>
-          <div className="absolute top-8 left-8 w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '0s' }}></div>
-          <div className="absolute top-16 right-12 w-1 h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '1s' }}></div>
-          <div className="absolute bottom-20 left-16 w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '2s' }}></div>
-          <div className="absolute bottom-8 right-8 w-1 h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '3s' }}></div>
-          <div className="absolute top-1/2 left-4 w-1 h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '4s' }}></div>
-          <div className="absolute top-1/3 right-4 w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '5s' }}></div>
+          <div className="absolute top-4 sm:top-8 left-4 sm:left-8 w-1 sm:w-2 h-1 sm:h-2 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '0s' }}></div>
+          <div className="absolute top-8 sm:top-16 right-6 sm:right-12 w-0.5 sm:w-1 h-0.5 sm:h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '1s' }}></div>
+          <div className="absolute bottom-10 sm:bottom-20 left-8 sm:left-16 w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '2s' }}></div>
+          <div className="absolute bottom-4 sm:bottom-8 right-4 sm:right-8 w-0.5 sm:w-1 h-0.5 sm:h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '3s' }}></div>
+          <div className="absolute top-1/2 left-2 sm:left-4 w-0.5 sm:w-1 h-0.5 sm:h-1 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '4s' }}></div>
+          <div className="absolute top-1/3 right-2 sm:right-4 w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#f8d550', animationDelay: '5s' }}></div>
         </div>
       </div>
 
-      {/* DJ Information */}
-      <div className="space-y-6">
-        {/* DJ Name */}
-        <h3 className="text-6xl font-light text-white tracking-wide" style={{
-          textShadow: '0 0 30px rgba(248, 213, 80, 0.5)',
+      {/* DJ Information - Responsive */}
+      <div className="space-y-4 sm:space-y-6">
+        {/* DJ Name - Responsive */}
+        <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-white tracking-wide" style={{
+          textShadow: '0 0 20px rgba(248, 213, 80, 0.5)',
           animation: 'glow 3s ease-in-out infinite alternate'
         }}>
           {dj.name}
         </h3>
         
-        {/* Genre */}
-        <p className="text-3xl font-light tracking-wider uppercase" style={{ 
+        {/* Genre - Responsive */}
+        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light tracking-wider uppercase" style={{ 
           color: '#f8d550',
-          textShadow: '0 0 20px rgba(248, 213, 80, 0.6)'
+          textShadow: '0 0 15px rgba(248, 213, 80, 0.6)'
         }}>
           {dj.genre}
         </p>
 
-        {/* Play Button */}
-        <div className="pt-8">
+        {/* Play Button - Responsive */}
+        <div className="pt-4 sm:pt-6 lg:pt-8">
           <Button 
             onClick={handlePlayPause}
-            className="rounded-3xl px-16 py-8 text-2xl font-light tracking-wider uppercase transition-all duration-500 hover:scale-110 hover:-translate-y-2"
+            className="rounded-2xl sm:rounded-3xl px-8 sm:px-12 lg:px-16 py-4 sm:py-6 lg:py-8 text-lg sm:text-xl lg:text-2xl font-light tracking-wider uppercase transition-all duration-500 hover:scale-105 sm:hover:scale-110 hover:-translate-y-1 sm:hover:-translate-y-2"
             style={{
               background: 'linear-gradient(135deg, rgba(248, 213, 80, 0.2), rgba(248, 213, 80, 0.1))',
               border: '2px solid rgba(248, 213, 80, 0.4)',
               color: '#f8d550',
-              boxShadow: '0 20px 40px rgba(248, 213, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 10px 20px rgba(248, 213, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
               textShadow: '0 0 10px rgba(248, 213, 80, 0.5)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'linear-gradient(135deg, rgba(248, 213, 80, 0.3), rgba(248, 213, 80, 0.2))';
               e.currentTarget.style.borderColor = '#f8d550';
-              e.currentTarget.style.boxShadow = '0 25px 50px rgba(248, 213, 80, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.boxShadow = '0 15px 30px rgba(248, 213, 80, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'linear-gradient(135deg, rgba(248, 213, 80, 0.2), rgba(248, 213, 80, 0.1))';
               e.currentTarget.style.borderColor = 'rgba(248, 213, 80, 0.4)';
-              e.currentTarget.style.boxShadow = '0 20px 40px rgba(248, 213, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.boxShadow = '0 10px 20px rgba(248, 213, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
             }}
           >
-            <ThemeIcon type={isPlaying ? "pause" : "play"} className="mr-6" />
+            <ThemeIcon type={isPlaying ? "pause" : "play"} className="mr-3 sm:mr-4 lg:mr-6" />
             {isPlaying ? 'Now Playing' : 'Listen'}
           </Button>
         </div>
@@ -1076,7 +1076,7 @@ function MusicPageContent() {
         </div>
 
           {/* Horizontal Scroll Container */}
-          <div className="relative max-w-7xl mx-auto">
+          <div className="relative w-full">
             <div 
               id="dj-carousel"
               className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
@@ -1097,11 +1097,10 @@ function MusicPageContent() {
                   alignItems: 'center'
                 }}
               >
-                <div className="opacity-0 animate-fade-in-up"
+                <div className="opacity-0 animate-fade-in-up w-full px-4 sm:px-6 lg:px-8"
                   style={{
                     animationDelay: '400ms',
-                    animationFillMode: 'forwards',
-                    width: '400px'
+                    animationFillMode: 'forwards'
                   }}
                 >
                   <DJ3DFloatingLayout 
@@ -1121,11 +1120,10 @@ function MusicPageContent() {
                   alignItems: 'center'
                 }}
               >
-                <div className="opacity-0 animate-fade-in-up"
+                <div className="opacity-0 animate-fade-in-up w-full px-4 sm:px-6 lg:px-8"
                   style={{
                     animationDelay: '600ms',
-                    animationFillMode: 'forwards',
-                    width: '400px'
+                    animationFillMode: 'forwards'
                   }}
                 >
                   <DJ3DFloatingLayout 
@@ -1160,17 +1158,17 @@ function MusicPageContent() {
               ))}
             </div>
 
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows - Hidden on Mobile */}
             <button
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 opacity-0 animate-fade-in-up"
+              className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 opacity-0 animate-fade-in-up hidden sm:flex"
               style={{
                 background: 'rgba(0,0,0,0.3)',
                 backdropFilter: 'blur(10px)',
                 border: '1px solid rgba(248, 213, 80, 0.3)',
                 color: '#f8d550',
                 animationDelay: '600ms',
-                  animationFillMode: 'forwards'
-                }}
+                animationFillMode: 'forwards'
+              }}
               onClick={() => {
                 const container = document.getElementById('dj-carousel');
                 if (container) {
@@ -1182,13 +1180,13 @@ function MusicPageContent() {
                 }
               }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
             <button
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 opacity-0 animate-fade-in-up"
+              className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 opacity-0 animate-fade-in-up hidden sm:flex"
               style={{
                 background: 'rgba(0,0,0,0.3)',
                 backdropFilter: 'blur(10px)',
@@ -1208,7 +1206,7 @@ function MusicPageContent() {
                 }
               }}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
